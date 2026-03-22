@@ -13,16 +13,12 @@ def lazy_imports():
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
     from apis_cripto import DefiLlamaAPI
-    globals().update(locals())
 
-lazy_imports()
-# Instanciar API DefiLlama
-defi_llama_api = DefiLlamaAPI()
-
-# Exemplo de função para buscar protocolos DeFi
 
 
 def buscar_protocolos_defi():
+    lazy_imports()
+    defi_llama_api = DefiLlamaAPI()
     try:
         protocolos = defi_llama_api.protocols()
         # Retorna apenas os 5 primeiros para exemplo
@@ -54,7 +50,9 @@ else:
     groq_client = None
 
 
+
 def showCryptoBot():
+    lazy_imports()
 
     # Inicialize a imagem na sessão, se ainda não estiver definida
     if 'image' not in st.session_state:
