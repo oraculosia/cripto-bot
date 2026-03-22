@@ -37,14 +37,14 @@ credentials = {
         'name': user['name'],
         'password': user['password'],
         'email': user['email'],
-    } for user in config['credentials']['users']}
+    } for user in get_config()['credentials']['users']}
 }
 
 authenticator = Authenticate(
     credentials=credentials,
-    cookie_name=config['cookie']['name'],
-    key=config['cookie']['key'],
-    cookie_expiry_days=config['cookie']['expiry_days']
+    cookie_name=get_config()['cookie']['name'],
+    key=get_config()['cookie']['key'],
+    cookie_expiry_days=get_config()['cookie']['expiry_days']
 )
 
 # --- PAGE SETUP ---
