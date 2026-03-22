@@ -96,6 +96,7 @@ with st.sidebar:
                 st.session_state['username'] = username
                 st.session_state['name'] = user['name']
                 st.session_state['role'] = user['role']
+                # Permite que qualquer role, incluindo 'cliente', acesse o chat
                 st.session_state.page = 'crypto_bot'
             else:
                 st.error("Usuário ou senha inválidos.")
