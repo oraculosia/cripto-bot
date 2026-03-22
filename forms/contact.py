@@ -1,13 +1,13 @@
 import streamlit as st
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, EmailStr
+## from fastapi import FastAPI, HTTPException
+## from pydantic import BaseModel, EmailStr
 import pandas as pd
 import os
-import stripe
+## import stripe
 from typing import Optional
 from datetime import datetime
 import asyncio
-from key_config import API_KEY_STRIPE, URL_BASE, STRIPE_WEBHOOK_SECRET
+## from key_config import API_KEY_STRIPE, URL_BASE, STRIPE_WEBHOOK_SECRET
 from config_handler import add_client_to_config
 
 import yaml  # Adicione no topo do arquivo, junto com os outros imports
@@ -15,11 +15,11 @@ import random  # Adicione no topo, junto aos outros imports
 import smtplib
 from email.mime.text import MIMEText
 
-app = FastAPI()
+## app = FastAPI()
 
 
 # Modelo de Cliente
-class Cliente(BaseModel):
+class Cliente:
     name: str  # Nome do cliente
     email: EmailStr  # Validação do e-mail
     cpf_cnpj: str  # CPF ou CNPJ
@@ -33,7 +33,7 @@ class Cliente(BaseModel):
     password: str  # Adicionando o atributo 'password'
 
 
-class ClienteResponse(BaseModel):
+class ClienteResponse:
     id: str
     name: str
     email: str
@@ -56,28 +56,28 @@ async def create_customer(cliente: Cliente):
             raise ValueError("Todos os campos são obrigatórios.")
 
         # Criação do cliente no Stripe
-        customer = stripe.Customer.create(
-            name=cliente.name,  # O campo 'name' é aceito pela API do Stripe
-            email=cliente.email,
-            metadata={
-                "cpf_cnpj": cliente.cpf_cnpj,
-                "whatsapp": cliente.whatsapp,
-                "endereco": cliente.endereco,
-                "cep": cliente.cep,
-                "bairro": cliente.bairro,
-                "cidade": cliente.cidade,
-                "role": cliente.role,
-                "username": cliente.username,  # Adicionando o 'username' aos metadados
-                "password": cliente.password  # Adicionando o 'password' aos metadados
-            }
-        )
+        # customer = stripe.Customer.create(
+        #     name=cliente.name,  # O campo 'name' é aceito pela API do Stripe
+        #     email=cliente.email,
+        #     metadata={
+        #         "cpf_cnpj": cliente.cpf_cnpj,
+        #         "whatsapp": cliente.whatsapp,
+        #         "endereco": cliente.endereco,
+        #         "cep": cliente.cep,
+        #         "bairro": cliente.bairro,
+        #         "cidade": cliente.cidade,
+        #         "role": cliente.role,
+        #         "username": cliente.username,  # Adicionando o 'username' aos metadados
+        #         "password": cliente.password  # Adicionando o 'password' aos metadados
+        #     }
+        # )
 
-        # Verifique se o campo 'name' está na resposta do Stripe
-        if 'name' not in customer:
-            raise ValueError(
-                "O campo 'name' não foi retornado na resposta do Stripe.")
+        # # Verifique se o campo 'name' está na resposta do Stripe
+        # if 'name' not in customer:
+        #     raise ValueError(
+        #         "O campo 'name' não foi retornado na resposta do Stripe.")
 
-        return ClienteResponse(
+        # return ClienteResponse(
             id=customer['id'],
             name=customer['name'],  # Certifique-se de que 'name' está correto
             email=customer['email'],
