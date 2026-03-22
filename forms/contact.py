@@ -49,55 +49,12 @@ class ClienteResponse:
 
 
 async def create_customer(cliente: Cliente):
-    try:
-        # Verifique se os campos obrigatórios não estão vazios
-        if not all([cliente.name, cliente.email, cliente.cpf_cnpj, cliente.endereco,
-                    cliente.cep, cliente.bairro, cliente.cidade, cliente.role, cliente.username, cliente.password]):
-            raise ValueError("Todos os campos são obrigatórios.")
-
-        # Criação do cliente no Stripe
-        # customer = stripe.Customer.create(
-        #     name=cliente.name,  # O campo 'name' é aceito pela API do Stripe
-        #     email=cliente.email,
-        #     metadata={
-        #         "cpf_cnpj": cliente.cpf_cnpj,
-        #         "whatsapp": cliente.whatsapp,
-        #         "endereco": cliente.endereco,
-        #         "cep": cliente.cep,
-        #         "bairro": cliente.bairro,
-        #         "cidade": cliente.cidade,
-        #         "role": cliente.role,
-        #         "username": cliente.username,  # Adicionando o 'username' aos metadados
-        #         "password": cliente.password  # Adicionando o 'password' aos metadados
-        #     }
-        # )
-
-        # # Verifique se o campo 'name' está na resposta do Stripe
-        # if 'name' not in customer:
-        #     raise ValueError(
-        #         "O campo 'name' não foi retornado na resposta do Stripe.")
-
-        # return ClienteResponse(
-            id=customer['id'],
-            name=customer['name'],  # Certifique-se de que 'name' está correto
-            email=customer['email'],
-            cpf_cnpj=cliente.cpf_cnpj,
-            whatsapp=cliente.whatsapp,
-            endereco=cliente.endereco,
-            cep=cliente.cep,
-            bairro=cliente.bairro,
-            cidade=cliente.cidade,
-            role=cliente.role,
-            username=cliente.username,  # Incluindo o 'username' na resposta
-            password=cliente.password,
-        )
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    # Função placeholder para compatibilidade
+    # Aqui você pode implementar lógica de cadastro se necessário
+    pass
 
 
-@app.post("/customers", response_model=ClienteResponse)
-async def api_create_customer(cliente: Cliente):
-    return await create_customer(cliente)
+
 
 
 def save_profile_image(uploaded_file, email):
