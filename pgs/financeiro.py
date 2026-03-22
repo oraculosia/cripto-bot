@@ -6,11 +6,12 @@ from pydantic import BaseModel
 from httpx import AsyncClient
 import asyncio
 import pandas as pd
-from decouple import config
+
+import streamlit as st
 
 # Chaves e URL do Asaas
-asaas_key = config('ASAAS_API_KEY')
-asaas_url = config('BASE_URL_ASAAS', default='BASE_URL_ASAAS')
+asaas_key = st.secrets["ASAAS_API_KEY"]
+asaas_url = st.secrets["BASE_URL_ASAAS"]
 
 
 app = FastAPI()

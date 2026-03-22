@@ -12,11 +12,11 @@ from decouple import config
 
 asaas_key = config('ASAAS_API_KEY')
 
-asaas_url = config('BASE_URL_ASAAS', default='BASE_URL_ASAAS')
+from decouple import config
 
 app = FastAPI()
-
-
+asaas_key = st.secrets["ASAAS_API_KEY"]
+asaas_url = st.secrets["BASE_URL_ASAAS"]
 # Modelo de Cliente
 class Cliente(BaseModel):
     name: str  # Nome do cliente

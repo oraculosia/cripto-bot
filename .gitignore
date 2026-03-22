@@ -1,13 +1,32 @@
-# created by virtualenv automatically
-*.tmp
-share
-Scripts
-Include
-etc
-Library
-Lib
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Config
 .env
---pycache__
-.idea
-.streamlit
-bfg-1.14.0.jar

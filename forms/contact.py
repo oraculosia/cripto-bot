@@ -9,7 +9,7 @@ from datetime import datetime
 import asyncio
 from key_config import API_KEY_STRIPE, URL_BASE, STRIPE_WEBHOOK_SECRET
 from config_handler import add_client_to_config
-from decouple import config
+
 import yaml  # Adicione no topo do arquivo, junto com os outros imports
 import random  # Adicione no topo, junto aos outros imports
 import smtplib

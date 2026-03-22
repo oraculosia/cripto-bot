@@ -3,11 +3,12 @@ from streamlit_lottie import st_lottie
 import requests
 import json
 import re
-from decouple import config
+
+import streamlit as st
 
 
 # Definindo a URL do webhook (substitua pelo seu URL real)
-WEBHOOK_URL = config("WEBHOOK_URL")
+WEBHOOK_URL = st.secrets["WEBHOOK_URL"]
 
 
 def is_valid_email(email):
