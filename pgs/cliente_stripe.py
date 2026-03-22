@@ -1,30 +1,30 @@
 import streamlit as st
 
-## from fastapi import FastAPI, HTTPException
-## from pydantic import BaseModel, EmailStr
-## import pandas as pd
-## import os
-## import stripe
-## from typing import Optional
-## from datetime import datetime
-## import asyncio
-## from config_handler import add_client_to_config
+# from fastapi import FastAPI, HTTPException
+# from pydantic import BaseModel, EmailStr
+# import pandas as pd
+# import os
+# import stripe
+# from typing import Optional
+# from datetime import datetime
+# import asyncio
+# from config_handler import add_client_to_config
 
-## import streamlit as st
-
-
-## stripe.api_key = st.secrets["API_KEY_STRIPE"]
+# import streamlit as st
 
 
-## app = FastAPI()
+# stripe.api_key = st.secrets["API_KEY_STRIPE"]
+
+
+# app = FastAPI()
 
 
 # Modelo de Cliente
-class Cliente(BaseModel):
+class Cliente:
     name: str  # Nome do cliente
-    email: EmailStr  # Validação do e-mail
+    email: str  # Validação do e-mail
     cpf_cnpj: str  # CPF ou CNPJ
-    whatsapp: Optional[str] = None  # WhatsApp é opcional
+    whatsapp: str = None  # WhatsApp é opcional
     endereco: str
     cep: str  # O CEP deve ser uma string para incluir zeros à esquerda
     bairro: str
@@ -33,12 +33,13 @@ class Cliente(BaseModel):
     username: str  # Adicionando o atributo 'username'
     password: str  # Adicionando o atributo 'password'
 
-class ClienteResponse(BaseModel):
+
+class ClienteResponse():
     id: str
     name: str
     email: str
     cpf_cnpj: str
-    whatsapp: Optional[str]  # WhatsApp é opcional na resposta
+    whatsapp: str  # WhatsApp é opcional na resposta
     endereco: str
     cep: str
     bairro: str
@@ -46,6 +47,7 @@ class ClienteResponse(BaseModel):
     role: str
     username: str  # Incluindo o atributo 'username' na resposta
     password: str  # Incluindo o atributo 'password' na resposta
+
 
 async def create_customer(cliente: Cliente):
     try:
@@ -73,7 +75,8 @@ async def create_customer(cliente: Cliente):
 
         # Verifique se o campo 'name' está na resposta do Stripe
         if 'name' not in customer:
-            raise ValueError("O campo 'name' não foi retornado na resposta do Stripe.")
+            raise ValueError(
+                "O campo 'name' não foi retornado na resposta do Stripe.")
 
         return ClienteResponse(
             id=customer['id'],
@@ -96,11 +99,13 @@ async def create_customer(cliente: Cliente):
 async def fetch_customers(offset: int = 0, limit: int = 100, name: Optional[str] = None, email: Optional[str] = None, starting_after: Optional[str] = None):
     try:
         # Buscando a lista de clientes com limite e starting_after
-        customers = stripe.Customer.list(limit=limit, starting_after=starting_after)
+        customers = stripe.Customer.list(
+            limit=limit, starting_after=starting_after)
 
         # Verifica se os dados de clientes estão disponíveis
         if not customers['data']:
-            raise HTTPException(status_code=404, detail="Nenhum cliente encontrado.")
+            raise HTTPException(
+                status_code=404, detail="Nenhum cliente encontrado.")
 
         return [
             ClienteResponse(
@@ -114,7 +119,8 @@ async def fetch_customers(offset: int = 0, limit: int = 100, name: Optional[str]
                 bairro=customer.get('metadata', {}).get('bairro', ''),
                 cidade=customer.get('metadata', {}).get('cidade', ''),
                 role=customer.get('metadata', {}).get('role', ''),
-                username=customer.get('metadata', {}).get('username', ''),  # Corrigido para 'username'
+                username=customer.get('metadata', {}).get(
+                    'username', ''),  # Corrigido para 'username'
                 password=customer.get('metadata', {}).get('password', ''),
             ) for customer in customers['data']
         ]
@@ -148,20 +154,23 @@ def save_uploaded_file(uploaded_file, type_username):
 async def handle_create_customer(cliente):
     resultado = None  # Inicializa resultado com None
     try:
-        resultado = await create_customer(cliente)  # Aguarda a conclusão da tarefa
+        # Aguarda a conclusão da tarefa
+        resultado = await create_customer(cliente)
         st.success(f"Cliente {resultado.name} criado com sucesso!")
 
         # Limpa os campos do formulário
         for key in st.session_state.keys():
-            st.session_state[key] = ""  # Reseta todos os campos do session_state
+            # Reseta todos os campos do session_state
+            st.session_state[key] = ""
 
     except Exception as e:
         # Verifica se resultado foi definido antes de usá-lo
         if resultado is not None:
             st.info(f'Parabéns {resultado.name} acesso seu: {resultado.email} que acabei de enviar a confirmação de seu cadastro'
-                     f' ,em alguns segundos vou enviar o link de pagamento para seu acesso ao sistema.')
+                    f' ,em alguns segundos vou enviar o link de pagamento para seu acesso ao sistema.')
         else:
-            st.error("Ocorreu um erro ao criar o cliente. Por favor, tente novamente.")
+            st.error(
+                "Ocorreu um erro ao criar o cliente. Por favor, tente novamente.")
             # Você pode também registrar o erro para depuração
             st.error(f"Erro: {str(e)}")
 
@@ -228,21 +237,28 @@ def showClienteStripe():
         # Coleta de dados do cliente
         with col1:
             name = st.text_input("Nome:", value=st.session_state.name)
-            documento = st.text_input("CPF/CNPJ", value=st.session_state.documento)
+            documento = st.text_input(
+                "CPF/CNPJ", value=st.session_state.documento)
         with col2:
             email = st.text_input("E-mail", value=st.session_state.email)
-            whatsapp = st.text_input(label="WhatsApp", placeholder='Exemplo: 31900001111', value=st.session_state.whatsapp)
+            whatsapp = st.text_input(
+                label="WhatsApp", placeholder='Exemplo: 31900001111', value=st.session_state.whatsapp)
 
         with col3:
-            endereco = st.text_input("Endereço", value=st.session_state.endereco)
+            endereco = st.text_input(
+                "Endereço", value=st.session_state.endereco)
             bairro = st.text_input("Bairro", value=st.session_state.bairro)
-            password = st.text_input("Digite uma senha:", type="password", value=st.session_state.password)
-            uploaded_file = st.file_uploader("Escolha uma imagem de perfil", type=["jpg", "jpeg", "png"])
+            password = st.text_input(
+                "Digite uma senha:", type="password", value=st.session_state.password)
+            uploaded_file = st.file_uploader(
+                "Escolha uma imagem de perfil", type=["jpg", "jpeg", "png"])
             if uploaded_file is not None:
-                st.session_state.image = uploaded_file  # Armazena o arquivo de imagem no session_state
+                # Armazena o arquivo de imagem no session_state
+                st.session_state.image = uploaded_file
 
                 # Exibe a imagem carregada
-                st.image(st.session_state.image, width=300)  # Exibe a imagem do arquivo
+                # Exibe a imagem do arquivo
+                st.image(st.session_state.image, width=300)
 
         with col4:
             cep = st.text_input("CEP", value=st.session_state.cep)
@@ -251,7 +267,8 @@ def showClienteStripe():
                 "Tipo de Usuário",
                 options=["cliente", "parceiro", "admin"],
                 index=0 if not st.session_state.role else ["cliente", "parceiro", "admin"].index(st.session_state.role))
-            username = st.text_input("Usuário:", value=st.session_state.username)
+            username = st.text_input(
+                "Usuário:", value=st.session_state.username)
 
         # Botão para enviar os dados do formulário
         submit_button = st.form_submit_button("CRIAR CLIENTE!")
@@ -310,12 +327,15 @@ def showClienteStripe():
                 # Adicione outras validações específicas, como verificação do formato do email e CPF/CNPJ
                 # (implementação das funções de validação não mostrada aqui)
 
-                add_client_to_config(client_data)  # Chama a função para adicionar os dados ao config.yaml
+                # Chama a função para adicionar os dados ao config.yaml
+                add_client_to_config(client_data)
 
             except ValueError as ve:
                 st.error(str(ve))  # Exibe um erro de validação ao usuário
             except Exception as e:
-                st.error("Ocorreu um erro ao adicionar o cliente. Por favor, tente novamente.")  # Tratamento genérico de erro
+                # Tratamento genérico de erro
+                st.error(
+                    "Ocorreu um erro ao adicionar o cliente. Por favor, tente novamente.")
 
             # Verifica se a imagem foi carregada
             if st.session_state.image is not None:
@@ -324,9 +344,11 @@ def showClienteStripe():
                     os.makedirs(diretorio)
 
                 # Inclui o diretório no caminho da imagem
-                image_path = os.path.join(diretorio, f'{cliente.username}')  # Use a extensão correta
+                # Use a extensão correta
+                image_path = os.path.join(diretorio, f'{cliente.username}')
                 with open(image_path, "wb") as f:
-                    f.write(st.session_state.image.getbuffer())  # Escreve o conteúdo do arquivo
+                    # Escreve o conteúdo do arquivo
+                    f.write(st.session_state.image.getbuffer())
             else:
                 st.warning("Nenhuma imagem foi carregada.")
 
@@ -345,7 +367,8 @@ def showClienteStripe():
 
     if st.button("Carregar Lista de Clientes"):
         try:
-            asyncio.create_task(handle_fetch_customers(offset, limit, name_filter, email_filter))
+            asyncio.create_task(handle_fetch_customers(
+                offset, limit, name_filter, email_filter))
             if clientes:
                 data = []
                 for cliente in clientes:
