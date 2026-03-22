@@ -265,9 +265,11 @@ ESTILO FINAL
         # if is_schedule_meeting_question(user_content):
         #     agendar_reuniao()
 
-        # Só chama o modelo Groq se o cliente estiver disponível
-        if groq_client is not None:
-            response = groq_client.chat.completions.create(
+        # Cria o cliente Groq dinamicamente usando a chave dos segredos
+        groq_api_key = st.secrets.get('GROQ_API_KEY')
+        if groq_api_key:
+            client = groq.Groq(api_key=groq_api_key)
+            response = client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=prompt,
                 max_tokens=3500,
