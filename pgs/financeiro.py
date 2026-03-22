@@ -2,23 +2,23 @@ from datetime import datetime
 from typing import Optional
 import streamlit as st
 
-## from fastapi import FastAPI, HTTPException
-## from pydantic import BaseModel
-## from httpx import AsyncClient
-## import asyncio
-## import pandas as pd
+# from fastapi import FastAPI, HTTPException
+# from pydantic import BaseModel
+# from httpx import AsyncClient
+# import asyncio
+# import pandas as pd
 
-## import streamlit as st
+# import streamlit as st
 
-## # Chaves e URL do Asaas
-## asaas_key = None
-## asaas_url = None
-
-
-## app = FastAPI()
+# Chaves e URL do Asaas
+# asaas_key = None
+# asaas_url = None
 
 
-class Cobranca(BaseModel):
+# app = FastAPI()
+
+
+class Cobranca:
     id: Optional[str]  # ID da cobrança, gerado pela API
     paymentId: Optional[str]  # ID do pagamento associado
     status: str  # Status da cobrança (ex: PENDING, PAID, CANCELED)
@@ -56,13 +56,13 @@ async def fetch_invoices():
         return response.json()["data"]  # Retorna apenas os dados das cobranças
 
 
-@app.post("/cobrancas/")
+# @app.post("/cobrancas/")
 async def create_invoice(cobranca: Cobranca):
     response = await criar_cobranca(cobranca)
     return {"id": response["id"]}
 
 
-@app.get("/cobrancas/")
+# @app.get("/cobrancas/")
 async def get_invoices():
     try:
         cobranças = await fetch_invoices()
