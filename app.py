@@ -4,14 +4,7 @@ import yaml
 import asyncio
 from pgs.home import showHome
 from pgs.crypto_bot import showCryptoBot
-from pgs.financeiro import showFinanceiro
-from pgs.cliente_stripe import showClienteStripe
-from pgs.cliente_assas import showClienteAssas
-from pgs.link_pagamento import showLinks
-from pgs.webhooks import shoWebhooks
-from pgs.assinatura import showAssinatura
-from pgs.subcontas_criar import showParceiro
-from pgs.split import showSplitPagamento
+
 import base64
 
 
