@@ -5,12 +5,11 @@ import groq
 
 # Importações pesadas e APIs só são carregadas quando necessário
 def lazy_imports():
-    global os, base64, cadastrar_cliente, asyncio, groq, smtplib, MIMEMultipart, MIMEText, DefiLlamaAPI
+    global os, base64, cadastrar_cliente, asyncio, smtplib, MIMEMultipart, MIMEText, DefiLlamaAPI
     import os
     import base64
     from forms.contact import cadastrar_cliente
     import asyncio
-    import groq
     import smtplib
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
