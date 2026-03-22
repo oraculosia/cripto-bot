@@ -13,7 +13,7 @@ app = FastAPI()
 
 
 # Modelo para Webhook
-class Webhook(BaseModel):
+class Webhook:
     id: Optional[int]  # ID do webhook, gerado automaticamente
     name: str          # Nome do webhook
     url: str           # URL onde o webhook será enviado

@@ -14,7 +14,7 @@ import streamlit as st
 ## asaas_key = st.secrets["ASAAS_API_KEY"]
 ## asaas_url = st.secrets["BASE_URL_ASAAS"]
 # Modelo de Cliente
-class Cliente(BaseModel):
+class Cliente:
     name: str  # Nome do cliente
     email: EmailStr  # Validação do e-mail
     cpf_cnpj: str  # CPF ou CNPJ
@@ -28,7 +28,7 @@ class Cliente(BaseModel):
     password: str  # Adicionando o atributo 'password'
 
 # Modelo de Resposta do Cliente
-class ClienteResponse(BaseModel):
+class ClienteResponse:
     id: int
     name: str
     email: EmailStr

@@ -11,7 +11,7 @@ import asyncio
 
 
 # Modelo para a Subconta
-class Subaccount(BaseModel):
+class Subaccount:
     name: str
     email: str
     cpfCnpj: str

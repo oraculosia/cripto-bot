@@ -18,7 +18,7 @@ import streamlit as st
 ## app = FastAPI()
 
 
-class LinkPagamento(BaseModel):
+class LinkPagamento:
     name: str
     billingType: str
     chargeType: str

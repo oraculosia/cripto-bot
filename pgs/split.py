@@ -13,7 +13,7 @@ import pandas as pd
 ## app = FastAPI()
 
 
-class SplitPagamento(BaseModel):
+class SplitPagamento:
     paymentId: str  # ID da cobrança
     walletId: str  # ID da carteira que receberá o split
     value: Optional[float]  # Valor do split (se necessário)
