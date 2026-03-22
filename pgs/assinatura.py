@@ -1,48 +1,48 @@
 import streamlit as st
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from httpx import AsyncClient
-import asyncio
-import pandas as pd
-# from configuracao import ASAAS_API_KEY, BASE_URL  # Desabilitado temporariamente
-from typing import Optional
-from datetime import datetime
+
+## from fastapi import FastAPI, HTTPException
+## from pydantic import BaseModel
+## from httpx import AsyncClient
+## import asyncio
+## import pandas as pd
+## from typing import Optional
+## from datetime import datetime
 
 
-app = FastAPI()
+## app = FastAPI()
 
 
-class Assinatura(BaseModel):
-    id: Optional[str]  # ID da assinatura, gerado pela API
-    customer: str  # ID do cliente associado à assinatura
-    value: float  # Valor da assinatura
-    dueDate: datetime  # Data de vencimento da assinatura
-    billingType: str  # Tipo de cobrança (ex: CARTAO, BOLETO)
-    paymentMethod: str  # Método de pagamento
-    description: Optional[str]  # Descrição adicional da assinatura
-    status: Optional[str]  # Status da assinatura (ex: ACTIVE, CANCELED)
+## class Assinatura(BaseModel):
+##     id: Optional[str]  # ID da assinatura, gerado pela API
+##     customer: str  # ID do cliente associado à assinatura
+##     value: float  # Valor da assinatura
+##     dueDate: datetime  # Data de vencimento da assinatura
+##     billingType: str  # Tipo de cobrança (ex: CARTAO, BOLETO)
+##     paymentMethod: str  # Método de pagamento
+##     description: Optional[str]  # Descrição adicional da assinatura
+##     status: Optional[str]  # Status da assinatura (ex: ACTIVE, CANCELED)
 
 
-async def criar_assinatura(assinatura: Assinatura):
-    async with AsyncClient() as client:
-        response = await client.post(
-            # f'{BASE_URL}/subscriptions',  # Endpoint para criar assinaturas
-            # headers={'access_token': ASAAS_API_KEY},
-            json=assinatura.dict()
-        )
-        response.raise_for_status()
-        return response.json()
+## async def criar_assinatura(assinatura: Assinatura):
+##     async with AsyncClient() as client:
+##         response = await client.post(
+##             # f'{BASE_URL}/subscriptions',  # Endpoint para criar assinaturas
+##             # headers={'access_token': ASAAS_API_KEY},
+##             json=assinatura.dict()
+##         )
+##         response.raise_for_status()
+##         return response.json()
 
 
-async def fetch_assinaturas():
-    async with AsyncClient() as client:
-        response = await client.get(
-            # f'{BASE_URL}/subscriptions',
-            # headers={'access_token': ASAAS_API_KEY}
-        )
-        response.raise_for_status()  # Levanta um erro se a resposta não for bem-sucedida
-        # Retorna apenas os dados das assinaturas
-        return response.json()["data"]
+## async def fetch_assinaturas():
+##     async with AsyncClient() as client:
+##         response = await client.get(
+##             # f'{BASE_URL}/subscriptions',
+##             # headers={'access_token': ASAAS_API_KEY}
+##         )
+##         response.raise_for_status()  # Levanta um erro se a resposta não for bem-sucedida
+##         # Retorna apenas os dados das assinaturas
+##         return response.json()["data"]
 
 
 async def showAssinatura():

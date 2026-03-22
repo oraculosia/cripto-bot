@@ -1,16 +1,16 @@
 import streamlit as st
 import asyncio
 from typing import Optional
-from fastapi import HTTPException, FastAPI
-from pydantic import BaseModel
-from httpx import AsyncClient
-# from configuracao import BASE_URL, ASAAS_API_KEY  # Desabilitado temporariamente
+## from fastapi import HTTPException, FastAPI
+## from pydantic import BaseModel
+## from httpx import AsyncClient
+## # from configuracao import BASE_URL, ASAAS_API_KEY  # Desabilitado temporariamente
 from datetime import date
-# from autentic.authentications import setup_authentication  # Desabilitado temporariamente
+## # from autentic.authentications import setup_authentication  # Desabilitado temporariamente
 import pandas as pd
 
 
-app = FastAPI()
+## app = FastAPI()
 
 
 class SplitPagamento(BaseModel):

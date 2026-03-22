@@ -1,21 +1,22 @@
 import streamlit as st
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, EmailStr
-import pandas as pd
-import os
-import stripe
-from typing import Optional
-from datetime import datetime
-import asyncio
-from config_handler import add_client_to_config
 
-import streamlit as st
+## from fastapi import FastAPI, HTTPException
+## from pydantic import BaseModel, EmailStr
+## import pandas as pd
+## import os
+## import stripe
+## from typing import Optional
+## from datetime import datetime
+## import asyncio
+## from config_handler import add_client_to_config
 
-
-# stripe.api_key = st.secrets["API_KEY_STRIPE"]
+## import streamlit as st
 
 
-app = FastAPI()
+## stripe.api_key = st.secrets["API_KEY_STRIPE"]
+
+
+## app = FastAPI()
 
 
 # Modelo de Cliente

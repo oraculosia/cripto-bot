@@ -1,20 +1,21 @@
 from datetime import datetime
 from typing import Optional
 import streamlit as st
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from httpx import AsyncClient
-import asyncio
-import pandas as pd
 
-import streamlit as st
+## from fastapi import FastAPI, HTTPException
+## from pydantic import BaseModel
+## from httpx import AsyncClient
+## import asyncio
+## import pandas as pd
 
-# Chaves e URL do Asaas
-asaas_key = None
-asaas_url = None
+## import streamlit as st
+
+## # Chaves e URL do Asaas
+## asaas_key = None
+## asaas_url = None
 
 
-app = FastAPI()
+## app = FastAPI()
 
 
 class Cobranca(BaseModel):

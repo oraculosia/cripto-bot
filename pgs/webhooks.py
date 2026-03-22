@@ -1,11 +1,11 @@
 import streamlit as st
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import List, Optional
-import asyncio
-import requests
-import pandas as pd
-# from configuracao import ASAAS_API_KEY, BASE_URL  # Desabilitado temporariamente
+
+## from fastapi import FastAPI, HTTPException
+## from pydantic import BaseModel
+## from typing import List, Optional
+## import asyncio
+## import requests
+## import pandas as pd
 
 
 # Inicialização do FastAPI

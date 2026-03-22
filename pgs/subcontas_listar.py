@@ -1,10 +1,9 @@
 import streamlit as st
 import asyncio
-from fastapi import FastAPI, HTTPException
-import httpx
-from fastapi import HTTPException
-import pandas as pd
-# from configuracao import ASAAS_API_KEY, BASE_URL  # Desabilitado temporariamente
+
+## from fastapi import FastAPI, HTTPException
+## import httpx
+## import pandas as pd
 
 
 app = FastAPI()

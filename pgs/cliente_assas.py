@@ -1,22 +1,18 @@
 import streamlit as st
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from httpx import AsyncClient
-from pydantic import BaseModel, EmailStr
-import asyncio, httpx
-import pandas as pd
-from typing import Optional
-from datetime import datetime
-from decouple import config
+## from fastapi import FastAPI, HTTPException
+## from pydantic import BaseModel, EmailStr
+## from httpx import AsyncClient
+## import asyncio, httpx
+## import pandas as pd
+## from typing import Optional
+## from datetime import datetime
+## from decouple import config
 
+## asaas_key = config('ASAAS_API_KEY')
 
-asaas_key = config('ASAAS_API_KEY')
-
-from decouple import config
-
-app = FastAPI()
-asaas_key = st.secrets["ASAAS_API_KEY"]
-asaas_url = st.secrets["BASE_URL_ASAAS"]
+## app = FastAPI()
+## asaas_key = st.secrets["ASAAS_API_KEY"]
+## asaas_url = st.secrets["BASE_URL_ASAAS"]
 # Modelo de Cliente
 class Cliente(BaseModel):
     name: str  # Nome do cliente

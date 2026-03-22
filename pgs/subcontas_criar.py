@@ -1,13 +1,13 @@
 import streamlit as st
 import asyncio
-from fastapi import HTTPException, FastAPI
-from pydantic import BaseModel
-import httpx
-# from configuracao import BASE_URL, ASAAS_API_KEY  # Desabilitado temporariamente
-from datetime import date
+
+## from fastapi import HTTPException, FastAPI
+## from pydantic import BaseModel
+## import httpx
+## from datetime import date
 
 
-app = FastAPI()
+## app = FastAPI()
 
 
 # Modelo para a Subconta
