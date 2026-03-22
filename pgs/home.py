@@ -28,8 +28,7 @@ def contact_form():
             submit_button = st.form_submit_button("ENVIAR")
 
         if submit_button:
-
-                st.stop()
+            st.stop()
 
             if not name:
                 st.error("Por favor, forneça seu nome.", icon="🧑")
@@ -52,7 +51,6 @@ def contact_form():
             data = {"email": email, "name": name, "message": message}
 
             try:
-
                 response.raise_for_status()  # Levanta um erro para códigos de status 4xx/5xx
                 st.success(
                     "A sua mensagem foi enviada com sucesso! 🎉", icon="🚀")
