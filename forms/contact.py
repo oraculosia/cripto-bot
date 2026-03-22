@@ -194,49 +194,59 @@ def cadastrar_cliente():
             verification_status = False
 
             # --- NOVO: Envio de e-mail automático ---
-            try:
-                email_config = st.secrets["email"]
-                smtp_server = email_config["host"]
-                smtp_port = email_config["port"]
-                smtp_user = email_config["user"]
-                smtp_pass = email_config["password"]
-                novo_usuario_email = st.session_state.email
-                destinatario = novo_usuario_email
-                subject = "Oráculo Cripto - Verificação de acesso ao sistema"
-                corpo = f"""
+                        try:
+                                email_config = st.secrets["email"]
+                                smtp_server = email_config["host"]
+                                smtp_port = email_config["port"]
+                                smtp_user = email_config["user"]
+                                smtp_pass = email_config["password"]
+                                novo_usuario_email = st.session_state.email
+                                destinatario = novo_usuario_email
+                                subject = "Oráculo Cripto - Verificação de acesso ao sistema"
+                                corpo = f"""
 <html>
-  <body>
-    <h2 style='color:#0057b8;'>Bem-vindo ao Oráculo Cripto!</h2>
-    <p>
-      Olá,<br><br>
-      Obrigado por se cadastrar em nossa plataforma.<br>
-      Para ativar seu acesso, utilize o código de verificação abaixo:<br><br>
-      <b>Código de verificação: <span style='color:#0057b8;font-size:1.2em'>{verification_code}</span></b><br><br>
-      <b>Equipe Oráculo Cripto</b><br>
-      <a href='https://oraculocripto.com.br'>oraculocripto.com.br</a>
-    </p>
-    <hr>
-    <small>Este é um e-mail automático. Não responda a esta mensagem.</small>
-  </body>
+    <body>
+        <h2 style='color:#0057b8;'>Bem-vindo ao Oráculo Cripto!</h2>
+        <p>
+            Olá,<br><br>
+            Obrigado por se cadastrar em nossa plataforma.<br>
+            Para ativar seu acesso, utilize o código de verificação abaixo:<br><br>
+            <b>Código de verificação: <span style='color:#0057b8;font-size:1.2em'>{verification_code}</span></b><br><br>
+            <b>Equipe Oráculo Cripto</b><br>
+            <a href='https://oraculocripto.com.br'>oraculocripto.com.br</a>
+        </p>
+        <hr>
+        <small>Este é um e-mail automático. Não responda a esta mensagem.</small>
+    </body>
 </html>
 """
-                from email.mime.multipart import MIMEMultipart
-                from email.mime.text import MIMEText
-                msg = MIMEMultipart()
-                msg['From'] = novo_usuario_email
-                msg['To'] = destinatario
-                msg['Subject'] = subject
-                msg.attach(MIMEText(corpo, 'html'))
-                if smtp_user and smtp_pass:
-                    with smtplib.SMTP(smtp_server, smtp_port) as server:
-                        server.starttls()
-                        server.login(smtp_user, smtp_pass)
-                        server.sendmail(msg['From'], msg['To'], msg.as_string())
-                    st.info("Código de verificação enviado para o e-mail cadastrado.")
-                else:
-                    st.warning("Configuração de e-mail não encontrada em secrets.toml.")
-            except Exception as e:
-                st.warning(f"Falha ao enviar e-mail de verificação: {e}")
+                                from email.mime.multipart import MIMEMultipart
+                                from email.mime.text import MIMEText
+                                msg = MIMEMultipart()
+                                msg['From'] = smtp_user
+                                msg['To'] = destinatario
+                                msg['Subject'] = subject
+                                msg.attach(MIMEText(corpo, 'html'))
+                                if smtp_user and smtp_pass:
+                                        try:
+                                                import socket
+                                                # Testa resolução DNS antes de tentar enviar
+                                                socket.gethostbyname(smtp_server)
+                                                with smtplib.SMTP(smtp_server, smtp_port, timeout=10) as server:
+                                                        server.starttls()
+                                                        server.login(smtp_user, smtp_pass)
+                                                        server.sendmail(msg['From'], msg['To'], msg.as_string())
+                                                st.info("Código de verificação enviado para o e-mail cadastrado.")
+                                        except Exception as smtp_error:
+                                                st.warning("Não foi possível enviar o e-mail de verificação devido a restrições de rede do servidor. Por favor, copie o código abaixo e entre em contato com o suporte para ativação manual.")
+                                                st.code(verification_code)
+                                                print(f"[ERRO SMTP] {smtp_error}")
+                                else:
+                                        st.warning("Configuração de e-mail não encontrada em secrets.toml.")
+                        except Exception as e:
+                                st.warning(f"Falha ao preparar envio de e-mail de verificação: {e}")
+                                st.code(verification_code)
+                                print(f"[ERRO EMAIL] {e}")
             # --- FIM NOVO ---
 
             cliente = Cliente(
