@@ -1,5 +1,7 @@
 
+
 import streamlit as st
+import groq
 
 # Importações pesadas e APIs só são carregadas quando necessário
 def lazy_imports():
