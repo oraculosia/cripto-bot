@@ -43,8 +43,12 @@ if groq_api_key is None:
         'Um token de API é necessário para determinados recursos.', icon='⚠️')
 
 
-# Inicializar o cliente Groq
-groq_client = groq.Groq(api_key=groq_api_key)
+
+# Inicializar o cliente Groq apenas se a chave estiver presente
+if groq_api_key is not None:
+    groq_client = groq.Groq(api_key=groq_api_key)
+else:
+    groq_client = None
 
 
 def showCryptoBot():
