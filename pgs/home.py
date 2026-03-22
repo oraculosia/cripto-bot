@@ -7,8 +7,7 @@ import re
 import streamlit as st
 
 
-# Definindo a URL do webhook (substitua pelo seu URL real)
-WEBHOOK_URL = st.secrets["WEBHOOK_URL"]
+
 
 
 def is_valid_email(email):
@@ -29,9 +28,7 @@ def contact_form():
             submit_button = st.form_submit_button("ENVIAR")
 
         if submit_button:
-            if not WEBHOOK_URL:
-                st.error(
-                    "O serviço de e-mail não está configurado. Por favor, tente novamente mais tarde.", icon="📧")
+
                 st.stop()
 
             if not name:
@@ -55,7 +52,7 @@ def contact_form():
             data = {"email": email, "name": name, "message": message}
 
             try:
-                response = requests.post(WEBHOOK_URL, json=data)
+
                 response.raise_for_status()  # Levanta um erro para códigos de status 4xx/5xx
                 st.success(
                     "A sua mensagem foi enviada com sucesso! 🎉", icon="🚀")
