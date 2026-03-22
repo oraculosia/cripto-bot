@@ -264,17 +264,20 @@ ESTILO FINAL
         # if is_schedule_meeting_question(user_content):
         #     agendar_reuniao()
 
-        # Chamada ao modelo Groq (exemplo com Llama3-70b)
-        response = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=prompt,
-            max_tokens=3500,
-            temperature=0.1,
-            stream=True
-        )
-        for chunk in response:
-            if hasattr(chunk.choices[0].delta, "content") and chunk.choices[0].delta.content:
-                yield chunk.choices[0].delta.content
+        # Só chama o modelo Groq se o cliente estiver disponível
+        if groq_client is not None:
+            response = groq_client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=prompt,
+                max_tokens=3500,
+                temperature=0.1,
+                stream=True
+            )
+            for chunk in response:
+                if hasattr(chunk.choices[0].delta, "content") and chunk.choices[0].delta.content:
+                    yield chunk.choices[0].delta.content
+        else:
+            yield "Desculpe, o assistente automático está temporariamente indisponível. Por favor, tente novamente mais tarde ou entre em contato com o suporte."
 
     # Defina o caminho da imagem padrão
     default_image_path = "./src/img/usuario-crypto.png"
