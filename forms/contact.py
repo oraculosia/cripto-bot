@@ -21,7 +21,7 @@ from email.mime.text import MIMEText
 # Modelo de Cliente
 class Cliente:
     name: str  # Nome do cliente
-    email: EmailStr  # Validação do e-mail
+    email: str  # E-mail do cliente
     cpf_cnpj: str  # CPF ou CNPJ
     whatsapp: Optional[str] = None  # WhatsApp é opcional
     endereco: str
