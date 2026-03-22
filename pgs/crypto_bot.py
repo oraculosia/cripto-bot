@@ -280,7 +280,7 @@ ESTILO FINAL
     default_image_path = "./src/img/usuario-crypto.png"
 
     # User-provided prompt
-    if prompt := st.chat_input(disabled=not groq_api_key):
+    if prompt := st.chat_input():
         st.session_state.messages.append({"role": "user", "content": prompt})
 
         # Verifica se a imagem do usuário está disponível e é um UploadedFile
