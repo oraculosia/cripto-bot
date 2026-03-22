@@ -1,0 +1,13 @@
+# created by virtualenv automatically
+*.tmp
+share
+Scripts
+Include
+etc
+Library
+Lib
+.env
+--pycache__
+.idea
+.streamlit
+bfg-1.14.0.jar

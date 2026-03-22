@@ -1,0 +1,66 @@
+cookie:
+  expiry_days: 30
+  key: my_signature_key
+  name: my_cookie_name
+credentials:
+  users:
+  - bairro: Eldorado
+    cep: '32315020'
+    cidade: Contagem
+    cpf_cnpj: 05940359612
+    created_at: '2024-01-17T00:00:00'
+    email: william@gmail.com
+    endereco: Rua Jose Barra do Nascimento
+    name: William Eustaquio
+    password: oraculosia
+    role: admin
+    username: william
+    whatsapp: '31996011180'
+  - bairro: 'NOVO PROCESSO '
+    cep: '32315020'
+    cidade: Contagem
+    cpf_cnpj: 452.257.106-20
+    created_at: '2024-12-01T09:14:18.011703'
+    email: williamprecon@gmail.com
+    endereco: R CAMPINA VERDE 561
+    name: 'HIRLENE LUCIA MOREIRA DOS SANTOS '
+    password: '123456'
+    role: cliente
+    username: teste
+    whatsapp: '31996243739'
+  - bairro: Eldorado
+    cep: '32315020'
+    cidade: Contagem
+    cpf_cnpj: 05940359612
+    created_at: '2024-12-01T09:44:53.982701'
+    email: programador.descpro@gmail.com
+    endereco: Rua Jose Barra do Nascimento 1983
+    name: William Eustaquio
+    password: '123456'
+    role: cliente
+    username: williamteste
+    whatsapp: '31996011180'
+  - bairro: 'SAO SEBASTIAO '
+    cep: 32342-170
+    cidade: 'CONTAGEM '
+    cpf_cnpj: 325.668.246-49
+    created_at: '2024-12-01T14:18:19.473123'
+    email: melhorvenda.shop@gmail.com
+    endereco: R NORMANDES SANTOS ALMEIDA , 186
+    name: 'ILMA ZETTI RODRIGUES '
+    password: '123456'
+    role: cliente
+    username: ilma
+    whatsapp: '31996243739'
+  - bairro: Testes Endereço
+    cep: '3000021'
+    cidade: Teste de Coidade
+    cpf_cnpj: '00000011100'
+    created_at: '2026-03-22T13:57:19.149704'
+    email: metrixfacebook@gmail.com
+    endereco: Rua das Galaxias
+    name: Teste 1
+    password: teste123456
+    role: cliente
+    username: teste1
+    whatsapp: '31988887777'

@@ -1,0 +1,394 @@
+import os
+from typing import Any, Dict, Optional
+
+import requests
+from dotenv import load_dotenv
+
+from defillama_sdk import DefiLlama
+
+client = DefiLlama()
+protocols = client.tvl.getProtocols()
+
+
+load_dotenv()
+
+url = f"{DEFILLAMA_BASE_URL}/{DEFILLAMA_API_KEY}/yields/pools"
+
+
+class APIConfigError(Exception):
+    def __init__(
+        self,
+        message: str,
+        service: str | None = None,
+        env_var: str | None = None,
+    ) -> None:
+        self.message = message
+        self.service = service
+        self.env_var = env_var
+
+        details = [message]
+        if service:
+            details.append(f"service={service}")
+        if env_var:
+            details.append(f"env_var={env_var}")
+
+        super().__init__(" | ".join(details))
+
+    def __str__(self) -> str:
+        return self.args[0]
+
+
+class APIRequestError(Exception):
+    def __init__(
+        self,
+        message: str,
+        service: str | None = None,
+        url: str | None = None,
+        status_code: int | None = None,
+        response_text: str | None = None,
+    ) -> None:
+        self.message = message
+        self.service = service
+        self.url = url
+        self.status_code = status_code
+        self.response_text = response_text
+
+        details = [message]
+        if service:
+            details.append(f"service={service}")
+        if url:
+            details.append(f"url={url}")
+        if status_code is not None:
+            details.append(f"status_code={status_code}")
+        if response_text:
+            details.append(f"response={response_text[:300]}")
+
+        super().__init__(" | ".join(details))
+
+    def __str__(self) -> str:
+        return self.args[0]
+
+
+class DefiLlamaAPI:
+    def __init__(self) -> None:
+        self.base_url = os.getenv(
+            "DEFILLAMA_BASE_URL", "https://pro-api.llama.fi").rstrip("/")
+        self.api_key = os.getenv("DEFILLAMA_API_KEY", "").strip()
+        self.timeout = int(os.getenv("REQUEST_TIMEOUT", "20"))
+        self.user_agent = os.getenv("HTTP_USER_AGENT", "CriptoBot/1.0")
+
+        self.session = requests.Session()
+        self.session.headers.update({
+            "Accept": "application/json",
+            "User-Agent": self.user_agent,
+        })
+
+    def _build_url(self, endpoint: str, pro: bool = False) -> str:
+        endpoint = endpoint.lstrip("/")
+        if pro:
+            if not self.api_key:
+                raise APIConfigError(
+                    message="DEFILLAMA_API_KEY não configurada para endpoint Pro",
+                    service="defillama",
+                    env_var="DEFILLAMA_API_KEY",
+                )
+            return f"{self.base_url}/{self.api_key}/{endpoint}"
+        return f"{self.base_url}/{endpoint}"
+
+    def _request(
+        self,
+        method: str,
+        endpoint: str,
+        *,
+        pro: bool = False,
+        params: Optional[Dict[str, Any]] = None,
+        json_body: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any] | list | float | int:
+        url = self._build_url(endpoint, pro=pro)
+        try:
+            response = self.session.request(
+                method=method,
+                url=url,
+                params=params,
+                json=json_body,
+                timeout=self.timeout,
+            )
+            response.raise_for_status()
+
+            content_type = response.headers.get("Content-Type", "")
+            if "application/json" in content_type:
+                return response.json()
+
+            text = response.text.strip()
+            try:
+                return response.json()
+            except Exception:
+                try:
+                    return float(text)
+                except ValueError:
+                    return text
+
+        except requests.HTTPError as e:
+            raise APIRequestError(
+                message="Erro HTTP na API DefiLlama",
+                service="defillama",
+                url=url,
+                status_code=e.response.status_code if e.response else None,
+                response_text=e.response.text if e.response else None,
+            ) from e
+        except requests.RequestException as e:
+            raise APIRequestError(
+                message="Erro de requisição na API DefiLlama",
+                service="defillama",
+                url=url,
+            ) from e
+
+    # =========================
+    # TVL & Protocolos
+    # =========================
+    def protocols(self):
+        return self._request("GET", "/api/protocols")
+
+    def protocol(self, protocol_slug: str):
+        return self._request("GET", f"/api/protocol/{protocol_slug}")
+
+    def protocol_tvl(self, protocol_slug: str):
+        return self._request("GET", f"/api/tvl/{protocol_slug}")
+
+    def token_protocols(self, symbol: str):
+        return self._request("GET", f"/api/tokenProtocols/{symbol}", pro=True)
+
+    def protocol_inflows(self, protocol_slug: str, timestamp: int):
+        return self._request("GET", f"/api/inflows/{protocol_slug}/{timestamp}", pro=True)
+
+    # =========================
+    # Chains
+    # =========================
+    def chains(self):
+        return self._request("GET", "/api/v2/chains")
+
+    def historical_chain_tvl_all(self):
+        return self._request("GET", "/api/v2/historicalChainTvl")
+
+    def historical_chain_tvl(self, chain: str):
+        return self._request("GET", f"/api/v2/historicalChainTvl/{chain}")
+
+    def chain_assets(self):
+        return self._request("GET", "/api/chainAssets", pro=True)
+
+    # =========================
+    # Coins & Prices
+    # =========================
+    def current_prices(self, coins: str, search_width: Optional[str] = None):
+        params = {}
+        if search_width:
+            params["searchWidth"] = search_width
+        return self._request("GET", f"/coins/prices/current/{coins}", params=params)
+
+    def historical_prices(self, timestamp: int, coins: str, search_width: Optional[str] = None):
+        params = {}
+        if search_width:
+            params["searchWidth"] = search_width
+        return self._request("GET", f"/coins/prices/historical/{timestamp}/{coins}", params=params)
+
+    def batch_historical_prices(self, coins_map: Dict[str, list[int]]):
+        return self._request("POST", "/coins/batchHistorical", json_body={"coins": coins_map})
+
+    def coin_chart(self, coins: str, period: Optional[str] = None, span: Optional[int] = None, search_width: Optional[str] = None):
+        params = {}
+        if period:
+            params["period"] = period
+        if span is not None:
+            params["span"] = span
+        if search_width:
+            params["searchWidth"] = search_width
+        return self._request("GET", f"/coins/chart/{coins}", params=params)
+
+    def coin_percentage(self, coins: str, timestamp: Optional[int] = None, look_forward: Optional[bool] = None, period: Optional[str] = None):
+        params = {}
+        if timestamp is not None:
+            params["timestamp"] = timestamp
+        if look_forward is not None:
+            params["lookForward"] = str(look_forward).lower()
+        if period:
+            params["period"] = period
+        return self._request("GET", f"/coins/percentage/{coins}", params=params)
+
+    def first_price(self, coins: str):
+        return self._request("GET", f"/coins/prices/first/{coins}")
+
+    def block_by_timestamp(self, chain: str, timestamp: int):
+        return self._request("GET", f"/coins/block/{chain}/{timestamp}")
+
+    # =========================
+    # Yields & Farming
+    # =========================
+    def yields_pools(self):
+        return self._request("GET", "/yields/pools", pro=True)
+
+    def yields_pools_old(self):
+        return self._request("GET", "/yields/poolsOld", pro=True)
+
+    def yield_chart(self, pool_id: str):
+        return self._request("GET", f"/yields/chart/{pool_id}", pro=True)
+
+    def yields_borrow(self):
+        return self._request("GET", "/yields/poolsBorrow", pro=True)
+
+    def yield_chart_lend_borrow(self, pool_id: str):
+        return self._request("GET", f"/yields/chartLendBorrow/{pool_id}", pro=True)
+
+    def yields_perps(self):
+        return self._request("GET", "/yields/perps", pro=True)
+
+    def yields_lsd_rates(self):
+        return self._request("GET", "/yields/lsdRates", pro=True)
+
+    # =========================
+    # Stablecoins
+    # =========================
+    def stablecoin_dominance(self, chain: str):
+        return self._request("GET", f"/stablecoins/stablecoindominance/{chain}")
+
+    def stablecoins(self):
+        return self._request("GET", "/stablecoins/stablecoins")
+
+    def stablecoin_charts_all(self):
+        return self._request("GET", "/stablecoins/stablecoincharts/all")
+
+    def stablecoin_charts(self, chain: str, stablecoin: Optional[int] = None):
+        params = {}
+        if stablecoin is not None:
+            params["stablecoin"] = stablecoin
+        return self._request("GET", f"/stablecoins/stablecoincharts/{chain}", params=params)
+
+    def stablecoin_detail(self, asset: str):
+        return self._request("GET", f"/stablecoins/stablecoin/{asset}")
+
+    def stablecoin_chains(self):
+        return self._request("GET", "/stablecoins/stablecoinchains")
+
+    def stablecoin_prices(self):
+        return self._request("GET", "/stablecoins/stablecoinprices")
+
+    # =========================
+    # Volume / DEX / Options / Derivatives
+    # =========================
+    def overview_dexs(self, exclude_total_data_chart: Optional[bool] = None, exclude_total_data_chart_breakdown: Optional[bool] = None, data_type: Optional[str] = None):
+        params = {}
+        if exclude_total_data_chart is not None:
+            params["excludeTotalDataChart"] = str(
+                exclude_total_data_chart).lower()
+        if exclude_total_data_chart_breakdown is not None:
+            params["excludeTotalDataChartBreakdown"] = str(
+                exclude_total_data_chart_breakdown).lower()
+        if data_type:
+            params["dataType"] = data_type
+        return self._request("GET", "/api/overview/dexs", params=params)
+
+    def overview_dexs_chain(self, chain: str, exclude_total_data_chart: Optional[bool] = None, exclude_total_data_chart_breakdown: Optional[bool] = None):
+        params = {}
+        if exclude_total_data_chart is not None:
+            params["excludeTotalDataChart"] = str(
+                exclude_total_data_chart).lower()
+        if exclude_total_data_chart_breakdown is not None:
+            params["excludeTotalDataChartBreakdown"] = str(
+                exclude_total_data_chart_breakdown).lower()
+        return self._request("GET", f"/api/overview/dexs/{chain}", params=params)
+
+    def summary_dex(self, protocol: str, data_type: Optional[str] = None):
+        params = {}
+        if data_type:
+            params["dataType"] = data_type
+        return self._request("GET", f"/api/summary/dexs/{protocol}", params=params)
+
+    def overview_options(self, exclude_total_data_chart: Optional[bool] = None, exclude_total_data_chart_breakdown: Optional[bool] = None):
+        params = {}
+        if exclude_total_data_chart is not None:
+            params["excludeTotalDataChart"] = str(
+                exclude_total_data_chart).lower()
+        if exclude_total_data_chart_breakdown is not None:
+            params["excludeTotalDataChartBreakdown"] = str(
+                exclude_total_data_chart_breakdown).lower()
+        return self._request("GET", "/api/overview/options", params=params)
+
+    def overview_options_chain(self, chain: str):
+        return self._request("GET", f"/api/overview/options/{chain}")
+
+    def summary_options(self, protocol: str):
+        return self._request("GET", f"/api/summary/options/{protocol}")
+
+    def overview_derivatives(self):
+        return self._request("GET", "/api/overview/derivatives", pro=True)
+
+    def summary_derivatives(self, protocol: str):
+        return self._request("GET", f"/api/summary/derivatives/{protocol}", pro=True)
+
+    # =========================
+    # Fees & Revenue
+    # =========================
+    def overview_fees(self, data_type: Optional[str] = None, exclude_total_data_chart: Optional[bool] = None, exclude_total_data_chart_breakdown: Optional[bool] = None):
+        params = {}
+        if data_type:
+            params["dataType"] = data_type
+        if exclude_total_data_chart is not None:
+            params["excludeTotalDataChart"] = str(
+                exclude_total_data_chart).lower()
+        if exclude_total_data_chart_breakdown is not None:
+            params["excludeTotalDataChartBreakdown"] = str(
+                exclude_total_data_chart_breakdown).lower()
+        return self._request("GET", "/api/overview/fees", params=params)
+
+    def overview_fees_chain(self, chain: str, data_type: Optional[str] = None):
+        params = {}
+        if data_type:
+            params["dataType"] = data_type
+        return self._request("GET", f"/api/overview/fees/{chain}", params=params)
+
+    def summary_fees(self, protocol: str, data_type: Optional[str] = None):
+        params = {}
+        if data_type:
+            params["dataType"] = data_type
+        return self._request("GET", f"/api/summary/fees/{protocol}", params=params)
+
+    # =========================
+    # Emissions / Ecosystem / Bridges
+    # =========================
+    def emissions(self):
+        return self._request("GET", "/api/emissions", pro=True)
+
+    def emission(self, protocol: str):
+        return self._request("GET", f"/api/emission/{protocol}", pro=True)
+
+    def categories(self):
+        return self._request("GET", "/api/categories", pro=True)
+
+    def forks(self):
+        return self._request("GET", "/api/forks", pro=True)
+
+    def oracles(self):
+        return self._request("GET", "/api/oracles", pro=True)
+
+    def entities(self):
+        return self._request("GET", "/api/entities", pro=True)
+
+    def treasuries(self):
+        return self._request("GET", "/api/treasuries", pro=True)
+
+    def hacks(self):
+        return self._request("GET", "/api/hacks", pro=True)
+
+    def raises(self):
+        return self._request("GET", "/api/raises", pro=True)
+
+    def historical_liquidity(self, token: str):
+        return self._request("GET", f"/api/historicalLiquidity/{token}", pro=True)
+
+    def bridges(self, include_chains: Optional[bool] = None):
+        params = {}
+        if include_chains is not None:
+            params["includeChains"] = str(include_chains).lower()
+        return self._request("GET", "/bridges/bridges", pro=True, params=params)
+
+    def bridge(self, bridge_id: int):
+        return self._request("GET", f"/bridges/bridge/{bridge_id}", pro=True)

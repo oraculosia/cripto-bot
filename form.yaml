@@ -1,0 +1,14 @@
+usuarios:
+- bairro: Testes Endereço
+  cep: '3000021'
+  cidade: Teste de Coidade
+  cpf_cnpj: '00000011100'
+  email: metrixfacebook@gmail.com
+  endereco: Rua das Galaxias
+  name: Teste 1
+  password: teste123456
+  role: cliente
+  username: teste1
+  verification_code: '432010'
+  verification_status: false
+  whatsapp: '31988887777'
