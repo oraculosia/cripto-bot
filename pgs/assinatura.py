@@ -26,8 +26,8 @@ class Assinatura(BaseModel):
 async def criar_assinatura(assinatura: Assinatura):
     async with AsyncClient() as client:
         response = await client.post(
-            f'{BASE_URL}/subscriptions',  # Endpoint para criar assinaturas
-            headers={'access_token': ASAAS_API_KEY},
+            # f'{BASE_URL}/subscriptions',  # Endpoint para criar assinaturas
+            # headers={'access_token': ASAAS_API_KEY},
             json=assinatura.dict()
         )
         response.raise_for_status()
@@ -37,8 +37,8 @@ async def criar_assinatura(assinatura: Assinatura):
 async def fetch_assinaturas():
     async with AsyncClient() as client:
         response = await client.get(
-            f'{BASE_URL}/subscriptions',
-            headers={'access_token': ASAAS_API_KEY}
+            # f'{BASE_URL}/subscriptions',
+            # headers={'access_token': ASAAS_API_KEY}
         )
         response.raise_for_status()  # Levanta um erro se a resposta não for bem-sucedida
         # Retorna apenas os dados das assinaturas

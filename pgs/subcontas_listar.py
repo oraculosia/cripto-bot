@@ -14,8 +14,8 @@ async def fetch_subaccounts():
     async with httpx.AsyncClient() as client:
         try:
             response = await client.get(
-                f'{BASE_URL}/accounts',
-                headers={'access_token': ASAAS_API_KEY}
+                # f'{BASE_URL}/accounts',
+                # headers={'access_token': ASAAS_API_KEY}
             )
             response.raise_for_status()  # Levanta um erro se a resposta não for bem-sucedida
             # Retorna apenas os dados das subcontas

@@ -10,8 +10,8 @@ import pandas as pd
 import streamlit as st
 
 # Chaves e URL do Asaas
-asaas_key = st.secrets["ASAAS_API_KEY"]
-asaas_url = st.secrets["BASE_URL_ASAAS"]
+asaas_key = None
+asaas_url = None
 
 
 app = FastAPI()
@@ -35,8 +35,8 @@ async def criar_link_pagamento(link: LinkPagamento):
     async with AsyncClient() as client:
         response = await client.post(
             # Endpoint para criar links de pagamento
-            f'{BASE_URL}/paymentLinks',
-            headers={'access_token': ASAAS_API_KEY},
+            # f'{BASE_URL}/paymentLinks',
+            # headers={'access_token': ASAAS_API_KEY},
             json=link.dict()
         )
         response.raise_for_status()
@@ -46,8 +46,8 @@ async def criar_link_pagamento(link: LinkPagamento):
 async def fetch_payment_links():
     async with AsyncClient() as client:
         response = await client.get(
-            f'{BASE_URL}/paymentLinks',
-            headers={'access_token': ASAAS_API_KEY}
+            # f'{BASE_URL}/paymentLinks',
+            # headers={'access_token': ASAAS_API_KEY}
         )
         response.raise_for_status()  # Levanta um erro se a resposta não for bem-sucedida
         # Retorna apenas os dados dos links de pagamento

@@ -24,8 +24,8 @@ async def criar_split_pagamento(split: SplitPagamento):
     async with AsyncClient() as client:
         response = await client.post(
             # Endpoint para criar splits de pagamento
-            f'{BASE_URL}/paymentSplits',
-            headers={'access_token': ASAAS_API_KEY},
+            # f'{BASE_URL}/paymentSplits',
+            # headers={'access_token': ASAAS_API_KEY},
             json=split.dict()
         )
         response.raise_for_status()
@@ -41,8 +41,8 @@ async def listar_splits_recebidos(offset: int = 0, limit: int = 100, paymentId: 
             "status": status
         }
         response = await client.get(
-            f'{BASE_URL}/payments/splits/received',
-            headers={'access_token': ASAAS_API_KEY},
+            # f'{BASE_URL}/payments/splits/received',
+            # headers={'access_token': ASAAS_API_KEY},
             # Filtra parâmetros None
             params={k: v for k, v in params.items() if v is not None}
         )
@@ -60,8 +60,8 @@ async def listar_splits_pagos(offset: int = 0, limit: int = 100, paymentId: Opti
             "status": status
         }
         response = await client.get(
-            f'{BASE_URL}/payments/splits/payed',
-            headers={'access_token': ASAAS_API_KEY},
+            # f'{BASE_URL}/payments/splits/payed',
+            # headers={'access_token': ASAAS_API_KEY},
             # Filtra parâmetros None
             params={k: v for k, v in params.items() if v is not None}
         )

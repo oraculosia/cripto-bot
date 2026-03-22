@@ -12,7 +12,7 @@ from config_handler import add_client_to_config
 import streamlit as st
 
 
-stripe.api_key = st.secrets["API_KEY_STRIPE"]
+# stripe.api_key = st.secrets["API_KEY_STRIPE"]
 
 
 app = FastAPI()

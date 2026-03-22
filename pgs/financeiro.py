@@ -10,8 +10,8 @@ import pandas as pd
 import streamlit as st
 
 # Chaves e URL do Asaas
-asaas_key = st.secrets["ASAAS_API_KEY"]
-asaas_url = st.secrets["BASE_URL_ASAAS"]
+asaas_key = None
+asaas_url = None
 
 
 app = FastAPI()
@@ -37,8 +37,8 @@ class Cobranca(BaseModel):
 async def criar_cobranca(cobranca: Cobranca):
     async with AsyncClient() as client:
         response = await client.post(
-            f'{BASE_URL}/payments',  # Endpoint para criar cobranças
-            headers={'access_token': ASAAS_API_KEY},
+            # f'{BASE_URL}/payments',  # Endpoint para criar cobranças
+            # headers={'access_token': ASAAS_API_KEY},
             json=cobranca.dict()
         )
         response.raise_for_status()
@@ -48,8 +48,8 @@ async def criar_cobranca(cobranca: Cobranca):
 async def fetch_invoices():
     async with AsyncClient() as client:
         response = await client.get(
-            f'{BASE_URL}/payments',
-            headers={'access_token': ASAAS_API_KEY}
+            # f'{BASE_URL}/payments',
+            # headers={'access_token': ASAAS_API_KEY}
         )
         response.raise_for_status()  # Levanta um erro se a resposta não for bem-sucedida
         return response.json()["data"]  # Retorna apenas os dados das cobranças

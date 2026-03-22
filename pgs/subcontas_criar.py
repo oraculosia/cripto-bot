@@ -32,8 +32,8 @@ class Subaccount(BaseModel):
 async def criar_subconta(subconta: Subaccount):
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            f'{BASE_URL}/accounts',
-            headers={'access_token': ASAAS_API_KEY},
+            # f'{BASE_URL}/accounts',
+            # headers={'access_token': ASAAS_API_KEY},
             json=subconta.dict()
         )
         response.raise_for_status()  # Levanta um erro se a resposta não for bem-sucedida
