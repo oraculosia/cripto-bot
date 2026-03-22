@@ -1,8 +1,16 @@
-import pandas as pd
-import streamlit.components.v1 as components
+
 import streamlit as st
-from pygwalker.api.streamlit import init_streamlit_comm, get_streamlit_html
-import streamlit_shadcn_ui as ui
+
+# Importações pesadas só são carregadas quando necessário
+def lazy_imports():
+    global pd, components, init_streamlit_comm, get_streamlit_html, ui
+    import pandas as pd
+    import streamlit.components.v1 as components
+    from pygwalker.api.streamlit import init_streamlit_comm, get_streamlit_html
+    import streamlit_shadcn_ui as ui
+    globals().update(locals())
+
+lazy_imports()
 
 
 async def showDashboard():

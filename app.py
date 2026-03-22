@@ -1,21 +1,35 @@
+
 import streamlit as st
-from streamlit_authenticator import Authenticate
-import yaml
-import asyncio
-from pgs.home import showHome
-from pgs.crypto_bot import showCryptoBot
 
-import base64
+# Importações pesadas e módulos de páginas só são carregados quando necessário
+def lazy_imports():
+    global Authenticate, yaml, asyncio, showHome, showCryptoBot, base64
+    import yaml
+    import asyncio
+    import base64
+    from streamlit_authenticator import Authenticate
+    from pgs.home import showHome
+    from pgs.crypto_bot import showCryptoBot
+    globals().update(locals())
+
+lazy_imports()
 
 
-# --- LOAD CONFIGURATION (cacheado) ---
+# --- LOAD CONFIGURATION (cacheado sob demanda) ---
 @st.cache_resource(show_spinner=False)
 def load_config():
+    import yaml
     with open("config.yaml") as file:
         return yaml.safe_load(file)
 
+config = None
 
-config = load_config()
+# Carrega config.yaml apenas quando necessário (exemplo: após login)
+def get_config():
+    global config
+    if config is None:
+        config = load_config()
+    return config
 
 # --- AUTHENTICATION SETUP ---
 credentials = {

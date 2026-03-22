@@ -1,18 +1,21 @@
+
 import streamlit as st
-import os
-import base64
-from forms.contact import cadastrar_cliente
-import asyncio
 
-import groq
+# Importações pesadas e APIs só são carregadas quando necessário
+def lazy_imports():
+    global os, base64, cadastrar_cliente, asyncio, groq, smtplib, MIMEMultipart, MIMEText, DefiLlamaAPI
+    import os
+    import base64
+    from forms.contact import cadastrar_cliente
+    import asyncio
+    import groq
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+    from apis_cripto import DefiLlamaAPI
+    globals().update(locals())
 
-
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-
-# Importação do módulo de APIs cripto
-from apis_cripto import DefiLlamaAPI
+lazy_imports()
 # Instanciar API DefiLlama
 defi_llama_api = DefiLlamaAPI()
 
