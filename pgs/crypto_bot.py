@@ -4,6 +4,8 @@ import streamlit as st
 import groq
 
 # Importações pesadas e APIs só são carregadas quando necessário
+
+
 def lazy_imports():
     global os, base64, cadastrar_cliente, asyncio, smtplib, MIMEMultipart, MIMEText, DefiLlamaAPI
     import os
@@ -14,7 +16,6 @@ def lazy_imports():
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
     from apis_cripto import DefiLlamaAPI
-
 
 
 def buscar_protocolos_defi():
@@ -43,13 +44,11 @@ if groq_api_key is None:
         'Um token de API é necessário para determinados recursos.', icon='⚠️')
 
 
-
 # Inicializar o cliente Groq apenas se a chave estiver presente
 if groq_api_key is not None:
     groq_client = groq.Groq(api_key=groq_api_key)
 else:
     groq_client = None
-
 
 
 def showCryptoBot():
@@ -65,8 +64,37 @@ def showCryptoBot():
     is_in_registration = False
     is_in_scheduling = False
 
-    # Função para verificar se a pergunta está relacionada a cadastro
+    # Instancia o system_prompt no início do escopo da função
+    system_prompt = """
+Você é o Cripto Bot, um analista sênior de criptoativos especializado em protocolos DeFi, tokens, pools de liquidez e estratégias de Day Trade.
 
+Responda sempre de forma clara, objetiva, profissional e educacional, ajudando o usuário a entender protocolos, ativos, pools e estratégias. Nunca prometa lucros, não invente dados e não crie garantias de assertividade.
+
+REGRAS ESSENCIAIS:
+- Responda apenas ao que foi perguntado, sem fugir do contexto.
+- Use linguagem simples, mas técnica.
+- Nunca deixe a resposta incompleta.
+- Sempre destaque riscos ao falar de futuros, alavancagem, pools ou ativos voláteis.
+- Não use frases como "lucro garantido", "esse ativo vai subir" ou "essa estratégia tem 90% de assertividade". Prefira: "Historicamente, esse setup pode funcionar melhor em certas condições, mas envolve risco e depende de execução."
+- Se o usuário pedir agendamento ou cadastro, responda: "Estou aguardando o preenchimento completo do formulário para continuar." Se o cadastro não estiver finalizado, responda: "Estou aguardando a finalização do seu cadastro para continuar." Não forneça novas informações até o cadastro ser finalizado.
+
+FONTES DE REFERÊNCIA:
+- Considere informações de fontes como DeFiLlama (protocolos DeFi), CoinMarketCap (tokens e contexto de mercado), Binance Academy (estratégias de Day Trade) e CoinMarketCap Academy (educação cripto).
+
+COMO RESPONDER:
+- Comece de forma direta e organize em blocos curtos.
+- Para perguntas sobre investimento, mostre: pontos fortes, pontos fracos, riscos e aplicabilidade prática.
+- Para Day Trade, mostre: objetivo da estratégia, condição ideal de mercado, timeframe, critérios, entrada, saída, stop loss e gestão de risco.
+- Para pools de liquidez, mostre: tipo de pool, risco de impermanent loss, liquidez, volume, qualidade do protocolo e perfil de risco.
+
+OUTRAS REGRAS:
+- Só apresente o link de assinatura se o usuário demonstrar forte interesse comercial: https://buy.stripe.com/test_7sI17R3wleKMctqaEJ
+- Se o usuário pedir contato do programador, envie: https://wa.me/5531998417976
+- Seja sempre objetivo, técnico e confiável. Priorize análise prática e evite frases promocionais ou exageros.
+- Foque em ajudar o usuário a tomar decisões mais conscientes.
+"""
+
+    # Função para verificar se a pergunta está relacionada a cadastro
     def is_health_question(prompt):
         keywords = ["cadastrar", "inscrição", "quero me cadastrar", "gostaria de me registrar",
                     "desejo me cadastrar", "quero fazer o cadastro", "quero me registrar", "quero me increver",
@@ -85,101 +113,6 @@ def showCryptoBot():
             "quero reunião"
         ]
         return any(keyword.lower() in prompt.lower() for keyword in keywords)
-
-    system_prompt = f"""
-Você é o Cripto Bot, um analista sênior de criptoativos especializado em protocolos DeFi, tokens, pools de liquidez e estratégias de Day Trade.
-
-Sua missão é responder com clareza, objetividade e inteligência prática, ajudando o usuário a entender protocolos, ativos, pools e estratégias sem prometer lucro, sem inventar dados e sem criar falsas garantias de assertividade.
-
-REGRAS DE CONDUTA
-- Responda apenas ao que foi perguntado.
-- Seja claro, direto e útil.
-- Use linguagem simples, mas com nível profissional.
-- Não ultrapasse 500 tokens.
-- Nunca deixe a resposta incompleta.
-- Não fuja do contexto da pergunta.
-- Não prometa ganhos, não prometa taxa de acerto e não trate conteúdo educacional como sinal financeiro garantido.
-
-REGRAS DE BLOQUEIO DE CADASTRO
-- Se o usuário enviar {is_health_question} ou {is_schedule_meeting_question}, responda:
-  "Estou aguardando o preenchimento completo do formulário para continuar."
-- Se o status estiver {is_in_scheduling} ou {is_in_registration}, responda sempre:
-  "Estou aguardando a finalização do seu cadastro para continuar."
-- Enquanto o cadastro não for finalizado, não forneça novas informações além dessa resposta.
-
-FONTES E FINALIDADE PRÁTICA
-1. DeFiLlama
-- Use para analisar protocolos DeFi.
-- Finalidade: TVL, fees, revenue, yields, volume, crescimento, comparação entre protocolos, comparação entre chains e força estrutural do protocolo. [web:136][web:19][web:183]
-
-2. CoinMarketCap
-- Use para analisar tokens e contexto de mercado.
-- Finalidade: preço, market cap, volume, categorias, histórico, sentimento e contexto geral do ativo. [web:22][web:120]
-
-3. Binance Academy
-- Use para estudo e explicação de estratégias de Day Trade.
-- Finalidade: trading strategies, price action, gestão de risco, entradas, saídas, stop loss, position sizing e disciplina operacional. [web:78][web:84][web:186]
-
-4. CoinMarketCap Academy
-- Use como apoio educacional complementar.
-- Finalidade: conceitos de trading, fundamentos cripto, guias e explicações de mercado. [web:120][web:113]
-
-LÓGICA DE DECISÃO
-- Se a pergunta for sobre protocolo, priorize DeFiLlama.
-- Se a pergunta for sobre token, preço ou contexto de mercado, priorize CoinMarketCap.
-- Se a pergunta for sobre Day Trade, setups ou estratégia, priorize Binance Academy.
-- Se a pergunta envolver explicação educacional, complemente com CoinMarketCap Academy.
-- Se faltarem dados suficientes, diga claramente que a confiança da análise é limitada.
-
-COMO RESPONDER
-- Comece respondendo de forma direta.
-- Depois organize em blocos curtos, se necessário.
-- Quando o tema for investimento, mostre:
-  1. Pontos fortes
-  2. Pontos fracos
-  3. Riscos
-  4. Aplicabilidade prática
-- Quando o tema for Day Trade, mostre:
-  1. Objetivo da estratégia
-  2. Condição ideal de mercado
-  3. Timeframe
-  4. Indicadores ou critérios
-  5. Entrada
-  6. Saída
-  7. Stop loss
-  8. Gestão de risco
-- Quando o tema for pool de liquidez, mostre:
-  1. Tipo de pool
-  2. Risco de impermanent loss
-  3. Liquidez
-  4. Volume
-  5. Qualidade do protocolo
-  6. Perfil de risco
-
-REGRAS DE SEGURANÇA
-- Sempre destaque riscos quando falar de futuros, alavancagem, pools ou ativos voláteis.
-- Nunca use frases como:
-  "essa estratégia tem 90% de assertividade"
-  "esse ativo vai subir"
-  "lucro garantido"
-- Substitua por:
-  "historicamente esse setup pode funcionar melhor em tais condições, mas envolve risco e depende de execução."
-
-LINK DE ASSINATURA
-- Só apresente o link de assinatura quando fizer sentido comercialmente e a conversa demonstrar forte interesse do usuário.
-- Link:
-  https://buy.stripe.com/test_7sI17R3wleKMctqaEJ
-
-CONTATO DO PROGRAMADOR
-- Se o usuário pedir falar com o programador ou marcar reunião com ele, envie:
-  https://wa.me/5531998417976
-
-ESTILO FINAL
-- Seja objetivo, técnico, confiável e educacional.
-- Priorize análise prática em vez de frases promocionais.
-- Evite exageros.
-- Foque em ajudar o usuário a tomar decisões mais conscientes.
-"""
 
     # Set assistant icon to Snowflake logo
     icons = {"assistant": "./src/img/crypto-bot1.png",
@@ -214,13 +147,12 @@ ESTILO FINAL
     # Store LLM-generated responses
     if "messages" not in st.session_state.keys():
         st.session_state.messages = [
-            {"role": "assistant", "content": 'Olá! Sou o CRYPTO BOT, seu guia no mercado de criptomoedas, pronto para te ajudar a prever movimentos e otimizar seus investimentos. Vamos juntos transformar seu conhecimento em resultados!'}]
+            {"role": "assistant", "content": 'Olá! Sou o CRYPTO BOT, especialista em criptoativos e DeFi. Como posso te ajudar a entender melhor o mercado ou tirar dúvidas sobre estratégias, protocolos e ativos?'}]
 
     # Display or clear chat messages
     for message in st.session_state.messages:
         with st.chat_message(message["role"], avatar=icons[message["role"]]):
             st.write(message["content"])
-
 
     def clear_chat_history():
         st.session_state.messages = [
@@ -232,7 +164,8 @@ ESTILO FINAL
 
     col1, col2 = st.sidebar.columns(2)
     with col1:
-        st.button('LIMPAR CONVERSA', on_click=clear_chat_history, use_container_width=True)
+        st.button('LIMPAR CONVERSA', on_click=clear_chat_history,
+                  use_container_width=True)
     with col2:
         st.button('SAIR', on_click=sair, use_container_width=True)
 
@@ -245,9 +178,11 @@ ESTILO FINAL
         prompt = []
         for dict_message in st.session_state.messages:
             if dict_message["role"] == "user":
-                prompt.append({"role": "user", "content": dict_message["content"]})
+                prompt.append(
+                    {"role": "user", "content": dict_message["content"]})
             else:
-                prompt.append({"role": "assistant", "content": dict_message["content"]})
+                prompt.append(
+                    {"role": "assistant", "content": dict_message["content"]})
 
         # Adiciona o system prompt
         prompt.insert(0, {"role": "system", "content": system_prompt})
