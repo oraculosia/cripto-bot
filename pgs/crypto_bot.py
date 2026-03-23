@@ -53,6 +53,9 @@ else:
 
 
 def showCryptoBot():
+
+    # DEBUG: Força exibição de st.secrets no log do servidor e no frontend
+    print('DEBUG st.secrets:', dict(st.secrets))
     lazy_imports()
 
     # Inicialize a imagem na sessão, se ainda não estiver definida
@@ -242,11 +245,9 @@ ESTILO FINAL
         prompt = []
         for dict_message in st.session_state.messages:
             if dict_message["role"] == "user":
-                prompt.append(
-                    {"role": "user", "content": dict_message["content"]})
+                prompt.append({"role": "user", "content": dict_message["content"]})
             else:
-                prompt.append(
-                    {"role": "assistant", "content": dict_message["content"]})
+                prompt.append({"role": "assistant", "content": dict_message["content"]})
 
         # Adiciona o system prompt
         prompt.insert(0, {"role": "system", "content": system_prompt})
@@ -262,11 +263,8 @@ ESTILO FINAL
         if is_health_question(user_content):
             cadastrar_cliente()
 
-        # if is_schedule_meeting_question(user_content):
-        #     agendar_reuniao()
-
-        # Cria o cliente Groq dinamicamente usando a chave dos segredos
-        groq_api_key = st.secrets.get('GROQ_API_KEY')
+        # Cria o cliente Groq dinamicamente usando a chave correta dos segredos
+        groq_api_key = st.secrets["email"].get("GROQ_API_KEY")
         if groq_api_key:
             try:
                 client = groq.Groq(api_key=groq_api_key)
