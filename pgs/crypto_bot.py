@@ -268,17 +268,20 @@ ESTILO FINAL
         # Cria o cliente Groq dinamicamente usando a chave dos segredos
         groq_api_key = st.secrets.get('GROQ_API_KEY')
         if groq_api_key:
-            client = groq.Groq(api_key=groq_api_key)
-            response = client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
-                messages=prompt,
-                max_tokens=3500,
-                temperature=0.1,
-                stream=True
-            )
-            for chunk in response:
-                if hasattr(chunk.choices[0].delta, "content") and chunk.choices[0].delta.content:
-                    yield chunk.choices[0].delta.content
+            try:
+                client = groq.Groq(api_key=groq_api_key)
+                response = client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=prompt,
+                    max_tokens=3500,
+                    temperature=0.1,
+                    stream=True
+                )
+                for chunk in response:
+                    if hasattr(chunk.choices[0].delta, "content") and chunk.choices[0].delta.content:
+                        yield chunk.choices[0].delta.content
+            except Exception as e:
+                yield f"Erro ao acessar o LLM: {e}"
         else:
             yield "Desculpe, o assistente automático está temporariamente indisponível. Por favor, tente novamente mais tarde ou entre em contato com o suporte."
 
