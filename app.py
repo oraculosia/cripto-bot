@@ -1,7 +1,18 @@
 
+
 import streamlit as st
 
+# Configuração da página principal
+st.set_page_config(
+    page_title="Cripto Bot",
+    page_icon="🤖",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 # Importações pesadas e módulos de páginas só são carregados quando necessário
+
+
 def lazy_imports():
     global Authenticate, yaml, asyncio, showHome, showCryptoBot, base64
     import yaml
@@ -11,6 +22,7 @@ def lazy_imports():
     from pgs.home import showHome
     from pgs.crypto_bot import showCryptoBot
     globals().update(locals())
+
 
 lazy_imports()
 
@@ -22,14 +34,18 @@ def load_config():
     with open("config.yaml") as file:
         return yaml.safe_load(file)
 
+
 config = None
 
 # Carrega config.yaml apenas quando necessário (exemplo: após login)
+
+
 def get_config():
     global config
     if config is None:
         config = load_config()
     return config
+
 
 # --- AUTHENTICATION SETUP ---
 credentials = {
@@ -54,7 +70,6 @@ if 'page' not in st.session_state:
     st.session_state.page = 'home'  # home, login, cadastro, verificar
 if 'user_verified' not in st.session_state:
     st.session_state.user_verified = False
-
 
 
 with st.sidebar:
@@ -85,12 +100,15 @@ with st.sidebar:
 
     # Login no sidebar
     if st.session_state.page == 'login':
-        st.markdown("<h3 style='text-align:center;'>Login</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align:center;'>Login</h3>",
+                    unsafe_allow_html=True)
         username = st.text_input("Usuário", key="login_username")
-        password = st.text_input("Senha", type="password", key="login_password")
+        password = st.text_input(
+            "Senha", type="password", key="login_password")
         if st.button("Entrar", key="btn_login"):
             # Autenticação simples (substitua por lógica real)
-            user = next((u for u in config['credentials']['users'] if u['username'] == username and u['password'] == password), None)
+            user = next((u for u in config['credentials']['users']
+                        if u['username'] == username and u['password'] == password), None)
             if user:
                 st.session_state['authentication_status'] = True
                 st.session_state['username'] = username
@@ -118,7 +136,8 @@ elif st.session_state.page == 'cadastro':
         st.info("Um código de verificação foi enviado para seu e-mail. Insira o código na próxima tela para ativar sua conta.")
 
 elif st.session_state.page == 'verificar':
-    st.markdown("<h3 style='text-align:center;'>Verificação de Conta</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align:center;'>Verificação de Conta</h3>",
+                unsafe_allow_html=True)
     codigo = st.text_input("Código de Verificação", key="codigo_verificacao")
     if st.button("Verificar", key="btn_verificar"):
         # Lógica de verificação (exemplo: buscar no form.yaml)
@@ -126,7 +145,8 @@ elif st.session_state.page == 'verificar':
         with open("form.yaml", "r", encoding="utf-8") as f:
             form_data = yaml.safe_load(f) or {}
         usuarios = form_data.get("usuarios", [])
-        user = next((u for u in usuarios if u['email'] == st.session_state.get('email') and u['verification_code'] == codigo), None)
+        user = next((u for u in usuarios if u['email'] == st.session_state.get(
+            'email') and u['verification_code'] == codigo), None)
         if user:
             user['verification_status'] = True
             with open("form.yaml", "w", encoding="utf-8") as f:
