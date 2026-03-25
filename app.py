@@ -5,7 +5,7 @@ import streamlit as st
 # Configuração da página principal
 st.set_page_config(
     page_title="Cripto Bot",
-    page_icon="🤖",
+    page_icon="💲",
     layout="wide",
     initial_sidebar_state="expanded"
 )
